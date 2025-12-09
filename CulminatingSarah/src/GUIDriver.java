@@ -9,7 +9,7 @@ public class GUIDriver extends Application {
 	@Override
 	public void start(Stage stage) throws Exception {
 		VBox root = new VBox(10);
-		Label text = new Label("HELLO THERE");
+		Label text = new Label("HELLO THERE LEXI");
 		root.getChildren().add(text);
 		Scene scene = new Scene(root,600,600);
 		stage.setScene(scene);

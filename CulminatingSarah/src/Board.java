@@ -31,16 +31,16 @@ public class Board {
 			int col = rand.nextInt(size);
 			boolean horizontal = rand.nextBoolean();
 			
-			if (canPlaceShip(ship.getLength(), row, col, horizontal)) {
-				for (int i = 0; i < ship.getLength(); i++) {
-					int r = 0;
-					int c = 0;
-					if (horizontal) {
-						r = row;
-						c = col + i;
-					} else {
-						r = row + i;
-						c = col;
+//		//	if (canPlaceShip(ship.getLength(), row, col, horizontal)) {
+//		//		for (int i = 0; i < ship.getLength(); i++) {
+//					int r = 0;
+//					int c = 0;
+//					if (horizontal) {
+//						r = row;
+//						c = col + i;
+//					} else {
+//						r = row + i;
+//						c = col;
 					}
 					
 				}

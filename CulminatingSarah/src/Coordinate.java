@@ -43,8 +43,7 @@ public class Coordinate {
 			//If both references point to the same object
 			if (this == other) {
 				return true;
-			} 
-			
+			}
 			//If the other object is not a Coordinate, they can't be equal.
 			if (!(other instanceOf Coordinate)) {
 				return false;

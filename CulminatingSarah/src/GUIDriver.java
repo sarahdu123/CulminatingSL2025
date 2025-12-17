@@ -14,7 +14,7 @@ public class GUIDriver extends Application {
 		root.getChildren().add(text);
 		Scene scene = new Scene(root,600,600);
 		stage.setScene(scene);
-		stage.show();
+		stage.show(); 
 	}
 
 	public static void main(String[] args) {

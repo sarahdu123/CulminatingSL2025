@@ -33,7 +33,6 @@ public class Ship {
 		this.name = name; 
 		this.length = length;
 		this.hits = 0;
-		this.hits = 0;
 		this.positions = new ArrayList<>();
 	}
 	
@@ -47,4 +46,23 @@ public class Ship {
 	/**
 	 * @return ship length
 	 */
+	public int getLength() {
+		return length;
+	}
+	
+	public void addPosition(Coordinate c) {
+		position.add(c);
+	}
+	
+	public ArrayList<Coordinate> getPositions() {
+		return positions;
+	}
+	
+	public void registerHit() {
+		hits ++;
+	}
+	
+	public boolean isSunk() {
+		return hits >= length;
+	}
 }

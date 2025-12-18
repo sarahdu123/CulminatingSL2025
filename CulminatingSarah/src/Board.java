@@ -193,7 +193,9 @@ public class Board {
 				}
 			}
 		}
+			return "Hit";
 	}
+		return "Miss";
 }
 		
 		/**

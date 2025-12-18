@@ -1,6 +1,5 @@
 
 public class Coordinate {
-	public class Coordinate{
 		private int row;
 		private int col;
 		
@@ -11,20 +10,19 @@ public class Coordinate {
 		 * @param col 0-based column index
 		 */
 
-		public class Coordinate(int row, int col) {
+		public Coordinate(int row, int col) {
 			this.row = row;
 			this.col = col;
- 
 		}
-		/*
+		
+		/**
 		 * @return the row index
 		 */
-		
 		public int getRow() {
 			return row;
 		}
 		
-		/*
+		/**
 		 * @return the column index
 		 */
 		public int getCol() {
@@ -40,28 +38,26 @@ public class Coordinate {
 		 */
 		@Override
 		public boolean equals(Object other) {
-			//If both references point to the same object
-			if (this == other) {
-				return true;
-			}
 			//If the other object is not a Coordinate, they can't be equal.
-			if (!(other instanceOf Coordinate)) {
+			if (!(other instanceof Coordinate)) {
 				return false;
 			}
 			
 			//Type cast
-			Coordinate c = (Coordinate) other;
-			
 			// Compare row and col values
-			return this.row == c.row && this.col == c.col;
-		}
+			Coordinate c = (Coordinate) other;
+			return row == c.row && col == c.col;
+			}
+			
 		
 		/**
-		 * @return a readable String representation (useful for debjugging)
+		 * @return a readable String representation
 		 */
 		@Override
 		public String toString() {
-			return "Coordinate[row=" + row + ", col=" + col + "]";
+			return "(" + row + ", " + col + ")";
 		}
-	}
 }
+
+
+

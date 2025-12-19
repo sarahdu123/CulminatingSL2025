@@ -39,7 +39,7 @@ public class Ship {
 	/**
 	 * @return ship name
 	 */
-	public String getame() {
+	public String getName() {
 		return name;
 	}
 	
@@ -51,7 +51,7 @@ public class Ship {
 	}
 	
 	public void addPosition(Coordinate c) {
-		position.add(c);
+		positions.add(c);
 	}
 	
 	public ArrayList<Coordinate> getPositions() {
@@ -59,7 +59,7 @@ public class Ship {
 	}
 	
 	public void registerHit() {
-		hits ++;
+		hits++;
 	}
 	
 	public boolean isSunk() {

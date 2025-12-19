@@ -80,4 +80,6 @@ public class Cell {
 		}
 		// Default: water / unknown
 		return '~';
-}
+	}
+
+	

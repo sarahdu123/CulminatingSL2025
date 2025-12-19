@@ -27,7 +27,7 @@ public class Ship {
 	 * Constructs a new Ship. 
 	 * 
 	 * @param name ship name
-	 * @param length shhip length (number of grid squares)
+	 * @param length ship length (number of grid squares)
 	 */
 	public Ship(String name, int length) {
 		this.name = name; 

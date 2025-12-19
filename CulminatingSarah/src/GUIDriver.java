@@ -11,7 +11,6 @@ public class GUIDriver extends Application {
 		VBox root = new VBox(10);
 		Label text = new Label("HELLO THERE LEXI");
 		Label text = new Label("HI");
-		root.getChildren().add(text);
 		Scene scene = new Scene(root,600,600);
 		stage.setScene(scene);
 		stage.show(); 

@@ -10,7 +10,7 @@ public class GUIDriver extends Application {
 	public void start(Stage stage) throws Exception {
 		VBox root = new VBox(10);
 		Label text = new Label("HELLO THERE LEXI");
-		Label text = new Label("HI");
+		Label text2 = new Label("HI");
 		Scene scene = new Scene(root,600,600);
 		stage.setScene(scene);
 		stage.show(); 

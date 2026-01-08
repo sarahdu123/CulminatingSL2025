@@ -22,6 +22,11 @@ import java.util.Random;
 
 public class Board {
 	
+	public static final int EMPTY = 0;
+	public static final int SHIP = 1;
+	public static final int HIT = 2;
+	public static final int MISS = 3;
+	
 	// Size of the board (ex: 8 is 8 x 8)
 	private int size;
 	
@@ -50,6 +55,13 @@ public class Board {
 	 */
 	public int[][] getGrid() {
 		return grid;
+	}
+	
+	/**
+	 * Returns the list of ships on the board.
+	 */
+	public ArrayList<Ship> getShips() {
+		return ships;
 	}
 	
 	/**
@@ -211,5 +223,16 @@ public class Board {
 				}
 			}
 			return true;
+	}
+		
+	public Ship getShipAt(int row, int col) {
+		for (Ship s : ships) {
+			for (Coordinate pos : s.getPositions()) {
+				if (pos.getRow() == row && pos.getCol() == col) {
+					return s;
+				}
+			}
+		}
+		return null;
 	}
 }

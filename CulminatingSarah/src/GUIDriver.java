@@ -11,7 +11,7 @@ import javafx.animation.PauseTransition;
 import java.util.Random;
 import java.net.URL;
 import java.util.Objects;
-
+import java.util.ArrayList;
 
 /**
  * JavaFX GUI for Battleship.
@@ -19,6 +19,10 @@ import java.util.Objects;
  */
 
 public class GUIDriver extends Application {
+		private ArrayList<Coordinate> targetQueue = new ArrayList<>();
+		private boolean gameOver = false;
+		
+		private boolean[][] computerShots = new boolean[SIZE][SIZE];
 		private static final int SIZE = 8;
 		
 		private Board playerBoard;
@@ -122,6 +126,28 @@ public class GUIDriver extends Application {
 			sunkImg = loadImage("smoke.gif");
 			waterImg = loadImage("water.png");
 		}
+		
+		private void addAdjacentTargets(int row, int col) {
+			int[][] directions = {
+					{-1, 0}, //up
+					{1, 0}, //down
+					{0, -1}, //left
+					{0, 1} //right
+			};
+			
+			for (int[] d : directions) {
+				int newRow = row + d[0];
+				int newCol = col + d[1];
+				
+				if (newRow >=0 && newRow < SIZE &&
+					newCol >=0 && newCol < SIZE &&
+					!computerShots[newRow][newCol]) {
+					
+					targetQueue.add(new Coordinate(newRow, newCol));
+				}
+					
+			}
+		}
 			
 		// Places all 5 ships on the given board
 		private void placeAllShips(Board board) {
@@ -169,7 +195,7 @@ public class GUIDriver extends Application {
 			Ship hitShip = computerBoard.getShipAt(row, col);
 			
 			if (result.startsWith("Sunk")) {
-				statusText.setText("You sunk the " + result.substring(5) + "!");
+				statusText.setText("You sunk the " + result.substring(5) + "! You get to go again!");
 			} else if (result.startsWith("Hit")) {
 				statusText.setText("You hit a ship! Go again.");
 			} else if (result.equals("Miss")) {
@@ -180,40 +206,84 @@ public class GUIDriver extends Application {
 			
 			if (computerBoard.allShipsSunk()) {
 				statusText.setText("You win! All computer ships sunk!");
+				gameOver = true;
+				disableComputerBoard();
+				return;
 			}
 		}
 		
 		private void computerTurnWithDelay() {
-			PauseTransition pause = new PauseTransition(javafx.util.Duration.seconds(1.2));
+			PauseTransition pause = new PauseTransition(javafx.util.Duration.seconds(1.5));
+			pause.setOnFinished(e -> computerTurn());
+			pause.play();
+		}
+		
+		private void computerExtraTurn() {
+			PauseTransition pause = new PauseTransition(javafx.util.Duration.seconds((1.5)));
 			pause.setOnFinished(e -> computerTurn());
 			pause.play();
 		}
 		
 		// Computer fires at random untried square on player board
 		private void computerTurn() {
+			
+			if (playerTurn) return;
 			int row, col;
-			String result;
-			do {
-				row = rand.nextInt(SIZE);
-				col = rand.nextInt(SIZE);
-				result = playerBoard.shootAt(row,  col);
+			
+	
+				//If there are target cells from a previous hit, use them first
+				if (!targetQueue.isEmpty()) {
+					Coordinate target = targetQueue.remove(0);
+					row = target.getRow();
+					col = target.getCol();
+				}
+				else {
+					// Otherwise shoot randomly
+					do {
+						row = rand.nextInt(SIZE);
+						col = rand.nextInt(SIZE);
+					} while (computerShots[row][col]);
+				}
+				
+				//Mark this cell as shot
+				computerShots[row][col] = true;
+				
+				//Shoot
+				String result = playerBoard.shootAt(row, col);
 				updateBoard(playerBoard, playerCells, true);
 				
-				if (result.startsWith("Sunk")) {
-					statusText.setText("Computer sunk you " + result.substring(5) + "!");
-				} 
+				//Handle results
+				if (result.startsWith("Hit")) {
+					statusText.setText("Computer hit your ship!");
+					addAdjacentTargets(row, col);
+					computerExtraTurn();
+					
+					if (!playerBoard.allShipsSunk()) {
+						computerExtraTurn();
+					}
+				}
+				else if (result.startsWith("Sunk")) {
+					statusText.setText("Computer sunk your" + result.substring(5) + "!");
+					targetQueue.clear(); // stop targeting once ship is sunk
+					
+					if (!playerBoard.allShipsSunk()) {
+						computerExtraTurn();
+					}
+				}
+				else {
+					playerTurn = true;
+					statusText.setText("Your turn!");
+				}
 				
+				//Game over check
 				if (playerBoard.allShipsSunk()) {
 					statusText.setText("Computer wins! All your ships are sunk!");
+					gameOver = true;
 					return;
 				}
-			} while (result.startsWith("Hit") || result.startsWith("Sunk"));
+			
+			}
 		
-			
-			playerTurn = true;
-			statusText.setText("Your turn!");
-		}
-			
 			
 		
 	/**
@@ -288,6 +358,14 @@ public class GUIDriver extends Application {
 		case "Submarine": return submarineImg;
 		case "Destroyer": return destroyerImg;
 		default: return waterImg;
+		}
+	}
+	
+	private void disableComputerBoard() {
+		for (int r = 0; r < SIZE; r++) {
+			for (int c = 0; c < SIZE; c++) {
+				computerCells[r][c].setDisable(true);
+			}
 		}
 	}
 	

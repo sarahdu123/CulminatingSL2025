@@ -26,7 +26,7 @@ public class Coordinate {
 	/*
 	 * @return the column index
 	 */
-	public int getCol() {
+	public int getCol() {          
 		return col;
 	}
 

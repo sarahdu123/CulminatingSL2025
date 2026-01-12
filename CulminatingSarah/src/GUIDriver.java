@@ -9,84 +9,92 @@ import javafx.geometry.*;
 import javafx.scene.text.*;
 import javafx.animation.PauseTransition;
 import java.util.Random;
-import java.net.URL;
-import java.util.Objects;
 import java.util.ArrayList;
 
 /**
- * JavaFX GUI for Battleship.
- * Each button represents one position on the board
+ * JavaFX GUI for the Battleship game.
+ * This class is responsible for: 
+ * - displaying the game boards
+ * - handling player mouse input 
+ * - controlling turn-based gameplay between the player and the computer
+ * - updating the visuals of the game after each move
+ *
+ * Each StackPane represents one cell on the game board. 
  */
 
 public class GUIDriver extends Application {
+		// Stores possible target coordinates for the computer after a hit
 		private ArrayList<Coordinate> targetQueue = new ArrayList<>();
+		
+		// Tracks whether the game has ended
 		private boolean gameOver = false;
 		
+		// Keeps track of which squares the computer has already shot at
 		private boolean[][] computerShots = new boolean[SIZE][SIZE];
+		
+		// Board size (8x8)
 		private static final int SIZE = 8;
 		
+		// Game boards for the player and computer
 		private Board playerBoard;
 		private Board computerBoard;
 		
+		// Visual grids for both boards
 		private StackPane[][] playerCells;
 		private StackPane[][] computerCells;
 		
+		// Text shown to the player
 		private Label statusText;
 		
+		// True if it is the player's turn
 		private boolean playerTurn = true;
 		
+		// Random number generator for ship placement and computer shots
 		private Random rand = new Random();
 		
-		// Images
+		// Random number generator for ship placement and computer shots
 		private Image carrierImg, battleshipImg, cruiserImg, submarineImg, destroyerImg;
 		private Image explosionImg, missImg, sunkImg, waterImg;
 		
-		
-		
+
+		/**
+        * Starts the Battleship game.
+        * Sets up boards and places ships.
+        */
+	
 		@Override
 		public void start(Stage stage) {
-			System.out.println(getClass().getResource("water.png"));
-			loadImages();
-//			
-//			URL url = getClass().getResource("water.png");
-//			
-//			if (url == null) {
-//				System.out.println("Image not found!");
-//			} else {
-//				System.out.println("Image found");
-//			}
-			
-//			Image picture = new Image(url.toExternalForm());
-			
-//			Image picture = new Image(getClass().getResourceAsStream("water.png"));
-//			
-//			ImageView pictureViewer = new ImageView(picture);
-
-//			
+			//Load images for the game
+			loadImages();	
 			//Initialize boards
 			playerBoard = new Board(SIZE);
 			computerBoard = new Board(SIZE);
 			
+			// Initialize visual cell grids
 			playerCells = new StackPane[SIZE][SIZE];
 			computerCells = new StackPane[SIZE][SIZE];
 			
+			// Randomly place ships on both boards
 			placeAllShips(playerBoard);
 			placeAllShips(computerBoard);
 			
+			// Create board layouts
 			GridPane playerGrid = createBoardGrid(playerCells, playerBoard, true); // player board (show ships)
 			GridPane computerGrid = createBoardGrid(computerCells, computerBoard, false); // computer board (clickable)
 			
+			// Status text shown below the boards
 			statusText = new Label("Your turn! Click on the computer's board.");
 			statusText.setFont(Font.font("Arial", FontWeight.BOLD, 16));
 			
-
-			// Labels for boards
+			// Player board section
 			VBox playerBox = new VBox(5, new Label("Your Board"), playerGrid);
 			playerBox.setAlignment(Pos.CENTER);
 			
+			// Computer board section
 			VBox computerBox = new VBox(5, new Label("Computer Board"), computerGrid);
 			computerBox.setAlignment(Pos.CENTER);
 			
+			// Place boards side by side
 			HBox boards = new HBox(50, playerBox, computerBox);
 			boards.setAlignment(Pos.CENTER);
 			
@@ -99,6 +107,7 @@ public class GUIDriver extends Application {
 			updateBoard(playerBoard, playerCells, true);
 			updateBoard(computerBoard, computerCells, false);
 			
+			// Create and show the scene
 			Scene scene = new Scene(root, 900, 500);
 			stage.setTitle("Battleship: Player vs Computer");
 			stage.setScene(scene);
@@ -108,12 +117,16 @@ public class GUIDriver extends Application {
 		
 		}
 		
-		
-		
+		/**
+	    * Loads an image from the resources folder.
+	    */
 		private Image loadImage(String filename) {
 			return new Image(getClass().getResourceAsStream(filename));
 		}
 		
+		/**
+		 * Loads all images used in the game.
+	    */
 		private void loadImages() {
 			carrierImg = loadImage("carrier.png");
 			battleshipImg = loadImage("battleship.png");
@@ -127,6 +140,9 @@ public class GUIDriver extends Application {
 			waterImg = loadImage("water.png");
 		}
 		
+		/**
+        * Adds nearby squares for the computer to try after it makes a hit to provide strategy on the computer's side 
+        */
 		private void addAdjacentTargets(int row, int col) {
 			int[][] directions = {
 					{-1, 0}, //up
@@ -149,7 +165,9 @@ public class GUIDriver extends Application {
 			}
 		}
 			
-		// Places all 5 ships on the given board
+		/**
+        * Randomly places all five ships on a board.
+        */
 		private void placeAllShips(Board board) {
 			board.placeShipRandom(new Ship("Carrier", 5), rand);
 			board.placeShipRandom(new Ship("Battleship", 4), rand);
@@ -158,7 +176,9 @@ public class GUIDriver extends Application {
 			board.placeShipRandom(new Ship("Destroyer", 2), rand);
 		}
 			
-		//Creates a GridPane of buttons for a board
+		/**
+        * Creates a GridPane representing a Battleship board. 
+        */
 		private GridPane createBoardGrid(StackPane[][] cells, Board board, boolean showShips) {
 			GridPane grid = new GridPane();
 			grid.setHgap(2);
@@ -184,7 +204,9 @@ public class GUIDriver extends Application {
 		return grid;
 		}
 			
-		// Player fires at computer board
+		/**
+        * Handles the player's shot on the computer's board. 
+        */
 		private void playerShoots(int row, int col) {
 			
 			if (!playerTurn) return;
@@ -212,19 +234,27 @@ public class GUIDriver extends Application {
 			}
 		}
 		
+		/**
+        * Starts the computer's turn after a delay. 
+        */
 		private void computerTurnWithDelay() {
 			PauseTransition pause = new PauseTransition(javafx.util.Duration.seconds(1.5));
 			pause.setOnFinished(e -> computerTurn());
 			pause.play();
 		}
 		
+		/**
+        * Gives the computer an extra delayed shot after a hit or sink. 
+        */
 		private void computerExtraTurn() {
 			PauseTransition pause = new PauseTransition(javafx.util.Duration.seconds((1.5)));
 			pause.setOnFinished(e -> computerTurn());
 			pause.play();
 		}
 		
-		// Computer fires at random untried square on player board
+		/**
+        * Handles the computer's turn logic.
+        */
 		private void computerTurn() {
 			
 			if (playerTurn) return;
@@ -263,7 +293,7 @@ public class GUIDriver extends Application {
 					}
 				}
 				else if (result.startsWith("Sunk")) {
-					statusText.setText("Computer sunk your" + result.substring(5) + "!");
+					statusText.setText("Computer sunk your " + result.substring(5) + "!");
 					targetQueue.clear(); // stop targeting once ship is sunk
 					
 					if (!playerBoard.allShipsSunk()) {
@@ -287,7 +317,7 @@ public class GUIDriver extends Application {
 			
 		
 	/**
-	 * Updates the buttons display based on board state.
+	 * Updates the board visuals based on the game state.
 	 */
 	
 	private void updateBoard(Board board, StackPane[][] cells, boolean showShips) {
@@ -347,7 +377,7 @@ public class GUIDriver extends Application {
 	}
 	
 	/**
-	 * Return ship image based on name
+	 * Returns the correct ship image based on ship's name
 	 */
 	
 	private Image getShipImage(Ship ship) {
@@ -361,6 +391,9 @@ public class GUIDriver extends Application {
 		}
 	}
 	
+	/**
+    * Disables the computer board when the game ends.
+    */
 	private void disableComputerBoard() {
 		for (int r = 0; r < SIZE; r++) {
 			for (int c = 0; c < SIZE; c++) {
@@ -369,106 +402,9 @@ public class GUIDriver extends Application {
 		}
 	}
 	
-//	private void styleButton(Button b, int value, boolean showShips, Ship ship) {
-//		b.setText("");
-//		
-//		if (value == Board.EMPTY) {
-//			b.setStyle("-fx-background-colour: " + WATER_COLOUR + ";");
-//		}
-//		else if (value == Board.MISS) {
-//			b.setStyle("-fx-background-colour: " + MISS_COLOUR + ";");
-//			b.setText(".");
-//		}
-//		else if (value == Board.HIT) {
-//			if (ship != null && ship.isSunk()) {
-//				b.setStyle("-fx-background-colour: " + SUNK_COLOUR + ";");
-//			} else {
-//				b.setStyle("-fx-background-colour: " + HIT_COLOUR + ";");
-//			}
-//			b.setText("X");
-//		}
-//		else if (value == Board.SHIP && showShips && ship != null) {
-//			b.setStyle("-fx-background-colour: " + getShipColour(ship) + ";");
-//		}
-//	}
-//	
-//	
-//	/**
-//	 * Disables the board when the game ends.
-//	 */
-//
-//	private void disableAllButtons(Button[][] buttons) {
-//		for (Button[] row : buttons) {
-//			for (Button b : row) {
-//				b.setDisable(true);
-//			}
-//		}
-//	}
-//	
 	/**
-	 * Styles a button based on the board value.
-	 * Uses bright colours to make the game more visual.
-	 */
-//	private void styleButton(Button b, int value, boolean showShips) {
-//		b.setFont(Font.font("Arial", FontWeight.BOLD, 14));
-//		
-//		if (value == 2) { //HIT
-//			b.setText("X");
-//			b.setStyle(
-//				"-fx-background-color: #ff4c4c;" +
-//				"-fx-text-fill: white;" +
-//				"-fx-border-color: black;"
-//			);
-//			b.setDisable(true);
-//		}
-//		else if (value == 3) { //MISS
-//			b.setText("o");
-//			b.setStyle(
-//				"-fx-background-color: #f0f0f0;" + // white/gray
-//				"-fx-text-fill: black;" +
-//				"-fx-border-color: black;"
-//			);
-//			b.setDisable(true);
-//		}
-//		else if (value == 1 && showShips) { // PLAYER SHIP
-//			b.setText("S");
-//			b.setStyle(
-//				"-fx-background-color: #2ecc71;" + //green
-//				"-fx-text-fill: white;" +
-//				"-fx-border-color: black;"
-//			);
-//		}
-//		else { // WATER
-//			if (showShips) {
-//				//Player board water
-//				b.setStyle(
-//					"-fx-background-color: #3498db;" + //blue
-//					"-fx-border-color: black;"
-//				);
-//			} else {
-//				//Computer board water (slightly darker)
-//				b.setStyle(
-//					"-fx-background-color: #2980b9;" +
-//					"-fx-border-color: black;"
-//				);
-//			}
-//			b.setText("~");
-//		}
-//		
-//	}
-	
-//	private String getShipColor(Ship ship) {
-//		switch (ship.getName()) {
-//		case "Carrier": return CARRIER_COLOUR;
-//		case "Battleship": return BATTLESHIP_COLOUR;
-//		case "Cruiser": return CRUISER_COLOUR;
-//		case "Submarine": return SUBMARINE_COLOUR;
-//		case "Destroyer": return DESTROYER_COLOUR;
-//		default: return "gray";
-//		}
-//	}
-////	
-//	
+    * Starts the program. 
+    */
 	public static void main(String[] args) {
 		launch(args);
 

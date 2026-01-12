@@ -22,6 +22,7 @@ import java.util.Random;
 
 public class Board {
 	
+	//Constants representing board square states
 	public static final int EMPTY = 0;
 	public static final int SHIP = 1;
 	public static final int HIT = 2;
@@ -50,6 +51,7 @@ public class Board {
 	
 	/**
 	 * Returns the grid so the GUI can read board values.
+	 * Used by the GUI to display the board state.
 	 * 
 	 * @return the 2D board grid
 	 */
@@ -59,6 +61,8 @@ public class Board {
 	
 	/**
 	 * Returns the list of ships on the board.
+	 * 
+	 * @return the ArrayList of Ship objects
 	 */
 	public ArrayList<Ship> getShips() {
 		return ships;
@@ -142,7 +146,7 @@ public class Board {
 	 * @param row row index
 	 * @param col column index
 	 * @param horizontal
-	 * @return
+	 * @return true if placement is valid, false otherwise
 	 */
 	private boolean canPlaceShip(int length, int row, int col, boolean horizontal) {
 		for (int i = 0; i < length; i++) {
@@ -161,11 +165,13 @@ public class Board {
 		}
 		return true;
 	}
+	
 	/**
 	 * Fires a shot at the given row and column.
 	 * Returns a message describing the result. 
-	 * @param row row index 
-	 * @param col col index
+	 * 
+	 * @param row therow index 
+	 * @param col the col index
 	 * @return "Out of bounds", "Already tried", "Miss", "Hit", or "Sunk"
 	 */
 
@@ -210,21 +216,28 @@ public class Board {
 		return "Miss";
 }
 		
-		/**
-		 * Returns true if every ship on the board is sunk.
-		 * Used to check if the game is over.
-		 * 
-		 * @return true if all ships are sunk
-		 */
-		public boolean allShipsSunk() {
-			for (Ship s : ships) {
-				if (!s.isSunk()) {
-					return false;
-				}
+	/**
+	 * Returns true if every ship on the board is sunk.
+	 * Used to check if the game is over.
+	 * 
+	 * @return true if all ships are sunk
+	 */
+	public boolean allShipsSunk() {
+		for (Ship s : ships) {
+			if (!s.isSunk()) {
+				return false;
 			}
-			return true;
+		}
+		return true;
 	}
-		
+	
+	/**
+	 * Returns the ship at a specific position, if any.
+	 * 
+	 * @param row the row index
+	 * @param col the column index
+	 * @return the Ship at that position, or null if none exists
+	 */
 	public Ship getShipAt(int row, int col) {
 		for (Ship s : ships) {
 			for (Coordinate pos : s.getPositions()) {

@@ -1,6 +1,18 @@
+/**
+ * The coordinate class represents a single position on the Battleship board.
+ * 
+ * A Coordinate stores:
+ * - a row index
+ * - a column index
+ * 
+ * Coordinate are used to track ship locations and shots on the board.
+ */
 
 public class Coordinate {
+	// Row index of the coordinate (0-based)
 	private int row;
+	
+	// Column index of the coordinate (0-based)
 	private int col;
 
 	/**
@@ -15,7 +27,9 @@ public class Coordinate {
 		this.col = col;
 
 	}
-	/*
+	/**
+	 * Returns the row index of this coordinate
+	 * 
 	 * @return the row index
 	 */
 
@@ -23,7 +37,9 @@ public class Coordinate {
 		return row;
 	}
 
-	/*
+	/**
+	 * Returns the column index of this coordinate
+	 * 
 	 * @return the column index
 	 */
 	public int getCol() {          
@@ -51,6 +67,8 @@ public class Coordinate {
 	}
 
 	/**
+	 * Returns a readable string representation of this Coordinate
+	 * 
 	 * @return a readable String representation
 	 */
 	@Override
